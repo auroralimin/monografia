@@ -1,0 +1,49 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Classe do documento
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Opções:
+%  - Graduação: bacharelado|engenharia|licenciatura
+%  - Pós-graduação: [qualificacao], mestrado|doutorado, ppca|ppginf
+
+\documentclass[engenharia,qualificacao]{UnB-CIC}%
+%\documentclass[qualificacao,mestrado,ppca]{UnB-CIC}%
+
+\usepackage{pdfpages}% incluir PDFs, usado no apêndice
+\usepackage{hyperref}
+\usepackage[thinlines]{easytable}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Informações do Trabalho
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\orientador{\prof \dr George Luiz Medeiros Teodoro}{CIC/UnB}
+
+\coordenador{\prof \dr Ricardo Pezzuol Jacobi }{CIC/UnB}%
+\diamesano{17}{Março}{2018}%
+
+%\membrobanca{\prof \dr Donald Knuth}{Stanford University}%
+%\membrobanca{\dr Leslie Lamport}{Microsoft Research}%
+
+\autor{Aurora Li Min}{de Freitas Wang}
+\coautor{13/0006408}{}
+ 
+\titulo{Otimização do processamento de imagens de alta resolução por meio de algoritmos de particionamento para ambientes híbridos distribuídos}%
+
+\palavraschave{Particionamento de imagens, Imagens de alta resolução, ambiente híbrido, \textit{Region Templates Framework}}%
+\keywords{LaTeX, scientific method, thesis}%
+
+\newcommand{\unbcic}{\texttt{UnB-CIC}}%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Texto
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}%
+    \capitulo{introducao}{Introdução}
+    %\capitulo{1_Introducao}{Introdução}%
+    %\capitulo{2_UnB-CIC}{A Classe \unbcic}%
+    %\capitulo{3_TCC}{Trabalho de Conclusão de Curso}%
+    %\capitulo{4_Apresentacao}{Apresentações}%
+    
+    %q\apendice{Apendice_Fichamento}{Fichamento de Artigo Científico}%
+    %\anexo{Anexo1}{Documentação Original \unbcic\ (parcial)}%
+\end{document}%

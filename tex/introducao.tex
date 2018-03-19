@@ -1,0 +1,55 @@
+\section{Definição do Problema}
+
+Métodos de diagnóstico auxiliado por computadores estão progressivamente sendo usados na área de bioinformática. Assim, existem várias soluções de análise e avaliação de imagens que se provaram capazes de aumentar a precisão dos diagnósticos. Devido a esses avanços, novas formas de se coletar dados biomédicos estão sendo desenvolvidas e aperfeiçoadas. 
+
+Nesse cenário, há um barateamento e crescente popularização de escâneres especializados em capturar imagens de alta resolução de tecido biológico. Em especial, a investigação das mesmas pode levar a entendimentos mais sofisticados de subtipos de doenças e a distribuição das suas especificidades\cite{sertel_kong_shimada_catalyurek_saltz_gurcan_2008}. Mas, apesar da coleta dessas imagens \textit{Whole-slide tissue} estar cada vez mais acessível, o processamento computacional delas se mostra altamente custoso.
+
+Ambientes computacionais híbridos e distribuídos que consistem de \textit{CPUs multi-core} e \textit{GPUs} de propósito geral - conhecidas como \textit{GPGPUs} - propiciam uma grande capacidade de processamento para cálculos científicos. Assim, a solução proposta pelo \textit{Region Templates}\cite{TEODORO2014589} tem como foco fornecer abstrações e arcabouços para esses ambientes de modo a prover armazenamento eficiente, bem como gerenciamento e processamento de tipos de dados comuns em análises de imagens de alta resolução.
+
+Em trabalhos anteriores, o \textit{Region Templates} foi continuamente estendido com foco em otimizar o processo de análise de sensibilidade e de ajuste de parâmetros\cite{doi:10.1093/bioinformatics/btw749}. Para tal, foi necessário assumir que a imagem \textit{Whole-slide tissue} havia sido previamente quebrada em pedaços, dados como parâmetro de entrada na execução dos algoritmos. Porém, considerando que o modo como a imagem é dividida influencia diretamente na eficiência no tempo de processamento de todos os pedaços, torna-se interessante integrar o processo de quebra da imagem no \textit{framework} em si e projetar algoritmos de particionamento que delimitam os pedaços a serem gerados nessa quebra, visando otimização.
+
+Ademais, ao se implementar algoritmos de particionamento para ambientes híbridos deve-se levar em consideração que o poder de processamento e os recursos de memória das \textit{GPUs} tem passado por melhoras significativas nos últimos anos. Atualmente, \textit{GPUs} de propósito geral fornecem acesso extremamente rápido à memória e capacidades massivas de multi-processamento, ultrapassando as de \textit{CPUs multi-core}\cite{teodoro_pan_kurc_kong_cooper_podhorszki_klasky_saltz_2013}. Assim, ressalta-se a importância de aproveitar essas capacidades para particionar a imagem, de modo a maximizar a vazão do processamento das suas partes.
+
+Em contrapartida, trabalhos anteriores\cite{kurc_qi_wang_wang_teodoro_2015} mostram que
+enquanto os tamanhos utilizados para quebrar uma imagem tem pouca influência no tempo de execução na \textit{CPU}, os tempos de execução na \textit{GPU} diminuem com imagens quebradas em pedaços maiores. Isso deve-se ao fato de que quanto maior o tamanho do pedaço sendo enviado para a \textit{GPU}, maior o paralelismo disponível e melhor a utilização dela.
+
+Enfim, entender as peculiaridades da execução cooperativa em um dado sistema \textit{CPU-GPU}\cite{teodoro_kurc_pan_cooper_kong_widener_saltz_2012} é de fundamental importância para se definir políticas de particionamento da imagem a ser processada nesse sistema. E, se bem explorado, o compromisso entre quebrar uma imagem em pedaços grandes para aproveitar melhor as capacidades das \textit{GPUs} e quebrá-la em vários pedaços para manter balanceamento entre nós \textit{CPUs} pode levar a bons resultados no que diz respeito à otimização nos tempos de execução.
+
+\pagebreak
+\section{Proposta de Solução}
+
+A proposta deste trabalho é integrar a quebra de uma imagem \textit{Whole-slide tissue} no \textit{framework Region Templates} e implementar políticas de particionamento para demarcar essa quebra. Tais políticas visam ser adaptáveis a ambientes de execução híbridos e distribuídos, de modo a explorar o compromisso entre tamanhos grandes de pedaços \textit{versus} quantidade balanceada dos mesmos, com enfoque na otimização no tempo de processamento total dos pedaços da imagem.
+
+Atualmente, algoritmos implementados usando o \textit{Region Templates} recebem como entrada o nome de um diretório contendo pedaços de uma imagem que já foi quebrada e, para cada pedaço, geram regiões de dados que são processadas por múltiplos nós de processamento. O objetivo desse trabalho quanto a integração com o \textit{framework} é, em vez de inicializar essas regiões de dados com a leitura de pedaços previamente quebrados, passar para tais regiões o nome da imagem completa e uma estrutura de dados com a delimitação de um pedaço, de modo a tornar a quebra da imagem uma responsabilidade interna do \textit{framework}.
+
+Em específico, a estrutura de dados com a delimitação de um pedaço será a abstração de um \textit{bounding box}, que é uma área definida por duas longitudes e duas latitudes. E, para a quebra da imagem, será utilizada a biblioteca \textit{OpenSlide}\cite{openslide}, compatível com as linguagens de programação C/C++ que provê interface para leitura de imagens \textit{whole-slide}.
+
+Assim, os algoritmos de particionamento a serem implementados gerarão como retorno uma lista de \textit{bounding box}. E, no geral, a proposta desses algoritmos será gerar delimitadores de pedaços grandes para os nós \textit{GPU} disponíveis e delimitadores de pedaços menores para os nós \textit{CPU} disponíveis, dada a relação de quantidade entre os tipos de nós e o \textit{speedup} de cada tipo.
+
+Tanto abordagens de particionamento clássicas - como a abordagem que usa \textit{quad-tree}\cite{spann_wilson_1985} - quanto novas serão implementadas, com o objetivo único de se melhorar o tempo de execução total. E, enquanto até agora uma imagem de alta resolução estava sendo quebrada uniformemente em pedaços de tamanho igual, esse trabalho propõe estabelecer políticas de particionamento não uniformes. Ou seja, a imagem será particionada em pedaços de tamanhos diferentes. Assim, as abordagens serão comparadas entre si, tendo o particionamento uniforme como base de comparação, e uma análise será feita a respeito da eficiência de cada uma e o motivo para tal.
+
+\pagebreak
+\section{Cronograma}
+
+
+\begin{table}[htbp]
+\LARGE
+\caption{Cronograma de atividades}     % mude aqui para seu título da tabela
+\begin{center}
+    \resizebox{\textwidth}{!}{ % abre resizebox, setar tabela da largura da página.
+    \begin{tabular}{|c|c|c|c|c|c|}
+        \hline
+        \multicolumn{1}{|c|}{\multirow{Atividades}} & \multicolumn{5}{c|}{Meses} \\ \cline{2-6}
+        \multicolumn{1}{|c|}{} & Março & \hspace  {0.05cm}Abril \hspace {0.05cm}& \hspace {0.01cm} Maio \hspace {0.01cm} & Junho & Julho  \\ \hline
+        %\rowcolor[HTML]{EFEFEF}
+        Integração com o \textit{Region Templates} & \textbf{X} & ~ & ~ & ~ & ~ \\ \hline
+        Pesquisa bibliográfica & \textbf{X} & \textbf{X} & \textbf{X} & ~ & ~  \\ \hline
+        Implementação dos algoritmos & \textbf{X} & \textbf{X} & \textbf{X} & ~ & ~ \\ \hline
+        Comparação, análise e interpretação & ~ & ~ & \textbf{X} & \textbf{X} & ~ \\ \hline
+        Redação da monografia & ~ & ~ & \textbf{X} & \textbf{X} & \textbf{X} \\ \hline
+        Revisão da monografia & ~ & ~ & ~ & ~ & \textbf{X} \\  \hline
+    \end{tabular}
+    } % fecha resizebox
+\end{center}
+\label{cronograma} % para referencia no texto.
+\end{table}
